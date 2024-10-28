@@ -43,7 +43,17 @@ jobs:
       build_command: |
         sccache -z;
         sccache --show-adv-stats;
-        clone-all -j$(nproc) -v -q --clone-upstream --single-branch --shallow-submodules;
+        # Need Python 3.11 for the buffer protocol in the limited API
+        export PYTHON_VERSION="3.11"
+        clone-all -j$(nproc) -v -q --clone-upstream --single-branch --shallow-submodules --no-update-env;
+        rapids-generate-scripts
+        . rapids-make-${PYTHON_PACKAGE_MANAGER}-env
+        # The latest version of this branch includes both my patches (required
+        # for RAPIDS Cython usage to work) and upstream patches required for
+        # Cython itself to work under the limited API.
+        export NO_CYTHON_COMPILE=true
+        python -m pip install git+https://github.com/cython/cython.git@limited-api-preview
+
         build-all                        \
           -v                             \
           -j$(nproc --ignore=1)          \

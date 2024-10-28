@@ -24,7 +24,7 @@ repos:
     - name: rmm
       sub_dir: python/rmm
       depends: [rmm]
-      args: {install: *rapids_build_backend_args}
+      args: {install: *rapids_build_backend_args, cmake: -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'"}
 
 - name: ucxx
   path: ucxx
@@ -41,11 +41,11 @@ repos:
     - name: ucxx
       sub_dir: python/ucxx
       depends: [ucxx]
-      args: {cmake: -DFIND_UCXX_CPP=ON, install: *rapids_build_backend_args}
+      args: {cmake: -DFIND_UCXX_CPP=ON -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
     - name: distributed-ucxx
       sub_dir: python/distributed-ucxx
       depends: [ucxx]
-      args: {cmake: -DFIND_UCXX_CPP=ON, install: *rapids_build_backend_args}
+      args: {cmake: -DFIND_UCXX_CPP=ON -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
 
 - name: kvikio
   path: kvikio
@@ -62,7 +62,7 @@ repos:
     - name: kvikio
       sub_dir: python/kvikio
       depends: [KvikIO]
-      args: {install: *rapids_build_backend_args}
+      args: {install: *rapids_build_backend_args, cmake: -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'"}
 
 - name: cudf
   path: cudf
@@ -82,11 +82,11 @@ repos:
     - name: pylibcudf
       sub_dir: python/pylibcudf
       depends: [cudf]
-      args: {install: *rapids_build_backend_args}
+      args: {cmake: -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
     - name: cudf
       sub_dir: python/cudf
       depends: [cudf]
-      args: {install: *rapids_build_backend_args}
+      args: {cmake: -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
     - name: dask_cudf
       sub_dir: python/dask_cudf
       args: {install: *rapids_build_backend_args}
@@ -115,11 +115,11 @@ repos:
     - name: pylibraft
       sub_dir: python/pylibraft
       depends: [raft]
-      args: {cmake: -DFIND_RAFT_CPP=ON, install: *rapids_build_backend_args}
+      args: {cmake: -DFIND_RAFT_CPP=ON -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
     - name: raft-dask
       sub_dir: python/raft-dask
       depends: [ucxx, raft]
-      args: {cmake: -DFIND_RAFT_CPP=ON, install: *rapids_build_backend_args}
+      args: {cmake: -DFIND_RAFT_CPP=ON -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
 
 - name: cuvs
   path: cuvs
@@ -135,7 +135,7 @@ repos:
     - name: cuvs
       sub_dir: python/cuvs
       depends: [cuvs]
-      args: {cmake: -DFIND_CUVS_CPP=ON, install: *rapids_build_backend_args}
+      args: {cmake: -DFIND_CUVS_CPP=ON -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
 
 - name: cumlprims_mg
   path: cumlprims_mg
@@ -158,7 +158,7 @@ repos:
     - name: cuml
       sub_dir: python/cuml
       depends: [cuml]
-      args: {cmake: -DFIND_CUML_CPP=ON, install: *rapids_build_backend_args}
+      args: {cmake: -DFIND_CUML_CPP=ON -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
 
 - name: cugraph-ops
   path: cugraph-ops
@@ -220,11 +220,11 @@ repos:
     - name: pylibcugraph
       sub_dir: python/pylibcugraph
       depends: [cugraph]
-      args: {cmake: -DFIND_CUGRAPH_CPP=ON, install: *rapids_build_backend_args}
+      args: {cmake: -DFIND_CUGRAPH_CPP=ON -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
     - name: cugraph
       sub_dir: python/cugraph
       depends: [cugraph]
-      args: {cmake: -DFIND_CUGRAPH_CPP=ON, install: *rapids_build_backend_args}
+      args: {cmake: -DFIND_CUGRAPH_CPP=ON -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
     - name: nx-cugraph
       sub_dir: python/nx-cugraph
       args: {install: *rapids_build_backend_args}
@@ -263,6 +263,7 @@ repos:
       # it doesn't have a build dir of its own. That means we can't list it as
       # a cpp repo after cuspatial (above), and we have to manually point CMake
       # to the cuspatial build dir here.
+      # Limited API compilation of cuproje currently fails due to https://github.com/cython/cython/issues/6405
       args:
         cmake: |
           -DFIND_CUPROJ_CPP=ON
@@ -270,4 +271,4 @@ repos:
     - name: cuspatial
       sub_dir: python/cuspatial
       depends: [cuspatial]
-      args: {install: *rapids_build_backend_args}
+      args: {cmake: -DCMAKE_CXX_FLAGS="'-DPy_LIMITED_API=0x030B0000 -DCYTHON_LIMITED_API=1'", install: *rapids_build_backend_args}
